@@ -1,4 +1,4 @@
-const cachesFolder = 'firest-catch';
+const staticCatchName = 'firest-catch';
 const assets = [
     '/',
     '/index.html',
@@ -17,7 +17,7 @@ const assets = [
 self.addEventListener('install', e =>{
     // console.log('service worker installed');
     e.waitUntil(
-        caches.open(cachesFolder).then( cache =>{
+        caches.open(staticCatchName).then( cache =>{
             console.log('caching sell assets');
             cache.addAll(assets);
         })
@@ -26,7 +26,15 @@ self.addEventListener('install', e =>{
 });
 // active
 self.addEventListener('activate', e =>{
-    console.log('service worker active',e);
+    // console.log('service worker active',e);
+    e.waitUntil(
+        caches.keys().then( keys =>{
+            return Promise.all(keys
+                .filter(key => key != staticCatchName)
+                .map(key => caches.delete(key))
+            );
+        })
+    );
 });
 // fetch
 self.addEventListener('fetch', e =>{
