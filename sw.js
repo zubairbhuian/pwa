@@ -1,4 +1,5 @@
 const staticCatchName = 'firest-catch';
+const dynamicCacheName = 'firest-catch-v1';
 const assets = [
     '/',
     '/index.html',
@@ -10,7 +11,8 @@ const assets = [
     '/img/dish.png',
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://fonts.gstatic.com/s/materialicons/v47/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
-    'https://fonts.gstatic.com/s/materialicons/v121/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2'
+    'https://fonts.gstatic.com/s/materialicons/v121/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
+    '/pages/fallback.html'
   ];
 
 // install
@@ -30,7 +32,7 @@ self.addEventListener('activate', e =>{
     e.waitUntil(
         caches.keys().then( keys =>{
             return Promise.all(keys
-                .filter(key => key != staticCatchName)
+                .filter(key => key !== staticCatchName && key !== dynamicCacheName)
                 .map(key => caches.delete(key))
             );
         })
@@ -42,7 +44,12 @@ self.addEventListener('fetch', e =>{
     e.respondWith(
         caches.match(e.request)
         .then( catchRes =>{
-            return catchRes || fetch(e.request);
-        })
-    )
-})
+            return catchRes || fetch(e.request).then(fetchRec => {
+                return caches.open(dynamicCacheName).then( cache =>{
+                    cache.put(e.request.url,fetchRec.clone());
+                    return fetchRec;
+                })
+            });
+        }).catch(() => caches.match('/pages/fallback.html'))
+    );
+});
