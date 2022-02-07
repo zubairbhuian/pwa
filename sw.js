@@ -20,7 +20,8 @@ const assets = [
   "https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css",
   'https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js',
   'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css',
-  '/fallback.html'
+  '/fallback.html',
+  '/assets/img/err/err-404.jpg'
 ];
 
 
@@ -71,7 +72,7 @@ self.addEventListener('fetch', e => {
         return caches.open(dynamicCacheName).then(cache => {
           cache.put(e.request.url, fetchRes.clone());
           // check cached items size
-          limitCacheSize(dynamicCacheName, 5);
+          limitCacheSize(dynamicCacheName, 6);
           return fetchRes;
         })
       });
