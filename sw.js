@@ -10,7 +10,6 @@ const assets = [
   "/assets/js/app.js",
   "/assets/js/theme.js",
   "/assets/js/vanilla-zoom.js",
-  "/assets/fonts/simple-line-icons.min.css",
   "/assets/img/tech/image4.jpg",
   "/assets/img/scenery/image5.jpg",
   "/assets/img/avatars/avatar1.jpg",
@@ -48,7 +47,7 @@ self.addEventListener("install", (e) => {
     })
   );
 });
-// demo sdfdsfffd sfggdkh kk uy u
+// demo sdjk
 // Activate
 self.addEventListener("activate", (e) => {
   // console.log("Activate Successful", e);
