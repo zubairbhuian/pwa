@@ -1,2 +1,2 @@
 ##PWA Day Five
-![](img/demo.png)
+![](/assets/img/demo.png)
