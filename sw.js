@@ -1,5 +1,5 @@
 const staticCacheName = "cache-v1";
-const dynamicCacheName = 'cache-v2';
+const dynamicCacheName = "cache-v2";
 
 const assets = [
   "/",
@@ -17,26 +17,22 @@ const assets = [
   "/assets/img/avatars/avatar3.jpg",
   "https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i",
   "https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css",
-  'https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js',
-  'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css',
-  '/fallback.html',
-  '/assets/img/err/err-404.jpg'
+  "https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js",
+  "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css",
+  "/fallback.html",
+  "/assets/img/err/err-404.jpg",
 ];
-
 
 // cache size limit function
 const limitCacheSize = (name, size) => {
-  caches.open(name).then(cache => {
-    cache.keys().then(keys => {
-      if(keys.length > size){
+  caches.open(name).then((cache) => {
+    cache.keys().then((keys) => {
+      if (keys.length > size) {
         cache.delete(keys[0]).then(limitCacheSize(name, size));
       }
     });
   });
 };
-
-
-
 
 // install
 self.addEventListener("install", (e) => {
@@ -47,38 +43,45 @@ self.addEventListener("install", (e) => {
     })
   );
 });
-// demo sdjk
+
 // Activate
 self.addEventListener("activate", (e) => {
   // console.log("Activate Successful", e);
   e.waitUntil(
-    caches.keys().then(keys => {
+    caches.keys().then((keys) => {
       //console.log(keys);
-      return Promise.all(keys
-        .filter(key => key !== staticCacheName && key !== dynamicCacheName)
-        .map(key => caches.delete(key))
+      return Promise.all(
+        keys
+          .filter((key) => key !== staticCacheName && key !== dynamicCacheName)
+          .map((key) => caches.delete(key))
       );
     })
   );
 });
 
-// Fetch 
-self.addEventListener('fetch', e => {
+// Fetch
+self.addEventListener("fetch", (e) => {
   //console.log('fetch event', e);
   e.respondWith(
-    caches.match(e.request).then(cacheRes => {
-      return cacheRes || fetch(e.request).then(fetchRes => {
-        return caches.open(dynamicCacheName).then(cache => {
-          cache.put(e.request.url, fetchRes.clone());
-          // check cached items size
-          limitCacheSize(dynamicCacheName, 6);
-          return fetchRes;
-        })
-      });
-    }).catch(() => {
-      if(e.request.url.indexOf('.html') > -1){
-        return caches.match('/fallback.html');
-      } 
-    })
+    caches
+      .match(e.request)
+      .then((cacheRes) => {
+        return (
+          cacheRes ||
+          fetch(e.request).then((fetchRes) => {
+            return caches.open(dynamicCacheName).then((cache) => {
+              cache.put(e.request.url, fetchRes.clone());
+              // check cached items size
+              limitCacheSize(dynamicCacheName, 6);
+              return fetchRes;
+            });
+          })
+        );
+      })
+      .catch(() => {
+        if (e.request.url.indexOf(".html") > -1) {
+          return caches.match("/fallback.html");
+        }
+      })
   );
 });
